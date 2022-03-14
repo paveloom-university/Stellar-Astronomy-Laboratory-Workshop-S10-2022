@@ -1,0 +1,7 @@
+# Binary files
+/plots
+/report/report.pdf
+
+# Tex auxiliary files
+report/*.log
+report/*.gz

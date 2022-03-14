@@ -1,0 +1,221 @@
+\documentclass[a4paper, oneside]{article}
+\special{pdf:minorversion 6}
+
+\usepackage{geometry}
+\geometry{
+  textwidth=358.0pt,
+  textheight=608.0pt,
+  top=90pt,
+  left=113pt,
+}
+
+\usepackage[english, russian]{babel}
+
+\usepackage{fontspec}
+\setmainfont[
+  Ligatures=TeX,
+  Extension=.otf,
+  BoldFont=cmunbx,
+  ItalicFont=cmunti,
+  BoldItalicFont=cmunbi,
+]{cmunrm}
+\usepackage{unicode-math}
+
+\usepackage[bookmarks=false]{hyperref}
+\hypersetup{pdfstartview={FitH},
+            colorlinks=true,
+            linkcolor=magenta,
+            pdfauthor={Павел Соболев}}
+
+\usepackage{calrsfs}
+\DeclareMathAlphabet{\pazocal}{OMS}{zplm}{m}{n}
+
+\usepackage[table]{xcolor}
+\usepackage{booktabs}
+\usepackage{caption}
+
+\usepackage{float}
+\usepackage{subcaption}
+\usepackage{graphicx}
+\graphicspath{ {../plots/} }
+\DeclareGraphicsExtensions{.pdf, .png}
+
+\usepackage{sectsty}
+\sectionfont{\centering}
+\subsubsectionfont{\centering\normalfont\itshape}
+
+\newcommand{\su}{\vspace{-0.5em}}
+\newcommand{\npar}{\par\vspace{\baselineskip}}
+
+\setlength{\parindent}{0pt}
+
+\DeclareMathOperator{\atantwo}{atan2}
+
+\usepackage{diagbox}
+
+\newlength{\imagewidth}
+\newlength{\imageheight}
+\newcommand{\subgraphics}[1]{
+\settowidth{\imagewidth}{\includegraphics[height=\imageheight]{#1}}%
+\begin{subfigure}{\imagewidth}%
+    \includegraphics[height=\imageheight]{#1}%
+\end{subfigure}%
+}
+
+\hypersetup{pdftitle={Лабораторный практикум (9-ый семестр, 2021)}}
+
+\begin{document}
+
+\subsubsection*{Лабораторный практикум (10-ый семестр, 2022)}
+\section*{Моделирование диска Галактики}
+\subsubsection*{Руководитель: А. В. Веселова \hspace{2em} Выполнил: П. Л. Соболев}
+
+\vspace{3em}
+
+\subsection*{Задачи}
+
+\begin{itemize}
+  \setlength\itemsep{-0.1em}
+  \item Создать (путем использования генератора случайных чисел) несколько каталогов пробных систем типа диска, таких что галактоосевое расстояние и расстояние от плоскости подчиняются экспоненциальному распределению.
+\end{itemize}
+
+\subsection*{Теория}
+
+Для получения выборки по радиусу необходимо воспользоваться методом обратного преобразования: применить к случайным числам из равномерного распределения $ \mathrm{Unif}[0, 1] $ обратную функцию радиального распределения. Будем считать, что объекты диска распределены равномерно по всем направлениям. Тогда
+
+\su
+\begin{equation}
+\begin{gathered}
+  F_R(r) = P(R \leqslant r) = P(S \leqslant \pi r^2) = \int_{0}^{\pi r^2} f_S(s) \, ds; \\
+  \textit{для каждого} \; x_0 \; \textit{из} \; U \sim \mathrm{Unif}[0, 1] \; \textit{имеем} \;\, y_0 = F^{-1}_R(x_0) \sim f_R(r).
+\end{gathered}
+\end{equation}
+
+Плотности вероятности равномерного и экспоненциального распределений \\ имеют следующий вид:
+
+\su
+\begin{equation}
+  f_{\mathrm{Unif}[a, b]}(x) = \begin{cases}
+    \frac{1}{b - a} & a \leq x \leq b, \\
+    0 & x < a \; \textit{или} \; x > b;
+  \end{cases}
+\end{equation}
+
+\su
+\begin{equation}
+  f_{\mathrm{Exp}(\lambda)}(x) = \begin{cases}
+    \lambda e^{-\lambda x} & x \geq 0, \\
+    0 & x < 0.
+  \end{cases}
+\end{equation}
+
+Тогда для радиальных распределений имеем
+
+\su
+\begin{equation}
+\begin{gathered}
+  F_{R, \, \mathrm{Unif}[0, R_0]}(r) = \frac{r^2}{R_0^2}, \; F_{R, \, \mathrm{Unif}[0, R_0]}^{-1}(x) = \sqrt{x} R_0^2, \; f_{R, \, \mathrm{Unif}[0, R_0]}(r) = \frac{2 r}{R_0^2}; \\
+F_{R, \, \mathrm{Exp}(\lambda)}(r) = 1 - e^{-\pi \lambda r^2}, \; F_{R, \, \mathrm{Exp}(\lambda)}^{-1}(x) = \sqrt{-\frac{1}{\pi \lambda} \ln{(1 - x)}}, \\
+f_{R, \, \mathrm{Exp}(\lambda)}(r) = 2 \pi \lambda r e^{-\pi \lambda r^2},
+\end{gathered}
+\end{equation}
+
+где $ R_0 $ --- радиус диска, а $ \lambda = 1 / b $ --- обратный коэффициент масштаба. \npar
+
+\subsection*{Реализация}
+
+Каталоги и графики для визуализаций получены с помощью скрипта, написанного на языке программирования \href{https://julialang.org}{Julia}. Код расположен в GitLab репозитории \href{https://gitlab.com/paveloom-g/university/s10-2022/stellar-astronomy-laboratory-workshop}{Stellar Astronomy Laboratory Workshop S10-2022}. Для воспроизведения результатов следуй инструкциям в файле {\footnotesize \texttt{README.md}}. \npar
+
+Для начала проверим генератор случайных чисел (\texttt{Xoshiro256++}) на тестовых распределениях (см. Рис. 1). Размер каталога здесь и далее полагается равным 1000 объектов.
+
+\captionsetup{justification=centering}
+
+\begin{figure}[h!]
+  \centering
+  \setlength{\imageheight}{4.65cm}
+  \subgraphics{uniform/Histogram}
+  \subgraphics{normal/Histogram}
+  \subgraphics{exponential/Histogram}
+  \subgraphics{laplace/Histogram}
+  \caption{Гистограммы тестовых распределений \\ $ \mathrm{Unif}[1, 2] $, $ \mathrm{N}(1, \sqrt{2}) $, $ \mathrm{Exp}(2) $, $ \mathrm{Laplace}(0, 2) $} и соответствующие плотности вероятности
+\end{figure}
+
+Теперь создадим каталог для пробной системы диска с равномерным распределением ($ R_0 = 2.0 \; \text{кпк} $) в плоскости симметрии и экспоненциально распределенным ($ b = 0.5 \; \text{кпк} $) расстоянием от плоскости симметрии (см. Рис. 2--3).
+
+\begin{figure}[h!]
+  \centering
+  \setlength{\imageheight}{4.07cm}
+  \subgraphics{uniform_disk/2/Histogram R}
+  \subgraphics{uniform_disk/2/Histogram θ}
+  \subgraphics{uniform_disk/2/Histogram Z}
+  \caption{Гистограммы выборок из распределений значений радиуса, угла и высоты и соответствующие плотности вероятности}
+\end{figure}
+
+\newpage
+
+\begin{figure}[h!]
+  \centering
+  \setlength{\imageheight}{5.1cm}
+  \subgraphics{uniform_disk/2/Heatmap Symmetry Plane}
+  \subgraphics{uniform_disk/2/Heatmap Vertical Cut}
+  \caption{Тепловые карты плоскости симметрии и \\ вертикального осевого сечения}
+\end{figure}
+
+Теперь положим галактоосевое расстояние также распределенным экспоненциально. В качестве параметров возьмем $ b_{r} = 2.6 \; \text{кпк} $ и $ b_{z} = 0.9 \; \text{кпк} $ (см. Bland-Hawthorn \& Gerhard (2016)). Создадим 3 таких каталога (см. Рис. 4--9).
+
+\begin{figure}[h!]
+  \centering
+  \setlength{\imageheight}{4.07cm}
+  \subgraphics{exponential_disk/1/Histogram R}
+  \subgraphics{exponential_disk/1/Histogram θ}
+  \subgraphics{exponential_disk/1/Histogram Z}
+  \caption{Гистограммы выборок из распределений значений радиуса, угла и высоты и соответствующие плотности вероятности (первый каталог)}
+\end{figure}
+
+\begin{figure}[h!]
+  \centering
+  \setlength{\imageheight}{5.1cm}
+  \subgraphics{exponential_disk/1/Heatmap Symmetry Plane}
+  \subgraphics{exponential_disk/1/Heatmap Vertical Cut}
+  \caption{Тепловые карты плоскости симметрии и \\ вертикального осевого сечения (первый каталог)}
+\end{figure}
+
+\newpage
+
+\begin{figure}[h!]
+  \centering
+  \setlength{\imageheight}{4.07cm}
+  \subgraphics{exponential_disk/2/Histogram R}
+  \subgraphics{exponential_disk/2/Histogram θ}
+  \subgraphics{exponential_disk/2/Histogram Z}
+  \caption{Гистограммы выборок из распределений значений радиуса, угла и высоты и соответствующие плотности вероятности (второй каталог)}
+\end{figure}
+
+\begin{figure}[h!]
+  \centering
+  \setlength{\imageheight}{5.1cm}
+  \subgraphics{exponential_disk/2/Heatmap Symmetry Plane}
+  \subgraphics{exponential_disk/2/Heatmap Vertical Cut}
+  \caption{Тепловые карты плоскости симметрии и \\ вертикального осевого сечения (второй каталог)}
+\end{figure}
+
+\begin{figure}[h!]
+  \centering
+  \setlength{\imageheight}{4.07cm}
+  \subgraphics{exponential_disk/3/Histogram R}
+  \subgraphics{exponential_disk/3/Histogram θ}
+  \subgraphics{exponential_disk/3/Histogram Z}
+  \caption{Гистограммы выборок из распределений значений радиуса, угла и высоты и соответствующие плотности вероятности (третий каталог)}
+\end{figure}
+
+\newpage
+
+\begin{figure}[h!]
+  \centering
+  \setlength{\imageheight}{5.1cm}
+  \subgraphics{exponential_disk/3/Heatmap Symmetry Plane}
+  \subgraphics{exponential_disk/3/Heatmap Vertical Cut}
+  \caption{Тепловые карты плоскости симметрии и \\ вертикального осевого сечения (третий каталог)}
+\end{figure}
+
+\end{document}
