@@ -27,11 +27,6 @@
             linkcolor=magenta,
             pdfauthor={Павел Соболев}}
 
-\usepackage{calrsfs}
-\DeclareMathAlphabet{\pazocal}{OMS}{zplm}{m}{n}
-
-\usepackage[table]{xcolor}
-\usepackage{booktabs}
 \usepackage{caption}
 
 \usepackage{float}
@@ -76,7 +71,8 @@
 
 \begin{itemize}
   \setlength\itemsep{-0.1em}
-  \item Создать (путем использования генератора случайных чисел) несколько каталогов пробных систем типа диска, таких что галактоосевое расстояние и расстояние от плоскости подчиняются экспоненциальному распределению.
+  \item Создать (путем использования генератора случайных чисел) несколько каталогов пробных систем типа диска, таких что галактоосевое расстояние и расстояние от плоскости подчиняются экспоненциальному распределению;
+  \item Протестировать метод оптимизации параметров распределения высот на созданных каталогах.
 \end{itemize}
 
 \subsection*{Теория}
@@ -87,7 +83,7 @@
 \begin{equation}
 \begin{gathered}
   F_R(r) = P(R \leqslant r) = P(S \leqslant \pi r^2) = \int_{0}^{\pi r^2} f_S(s) \, ds; \\
-  \textit{для каждого} \; x_0 \; \textit{из} \; U \sim \mathrm{Unif}[0, 1] \; \textit{имеем} \;\, y_0 = F^{-1}_R(x_0) \sim f_R(r).
+  \textit{для каждого} \;\; x_0 \;\; \textit{из} \;\; U \sim \mathrm{Unif}[0, 1] \;\; \textit{имеем} \;\;\, y_0 = F^{-1}_R(x_0) \sim f_R(r).
 \end{gathered}
 \end{equation}
 
@@ -114,8 +110,8 @@
 \su
 \begin{equation}
 \begin{gathered}
-  F_{R, \, \mathrm{Unif}[0, R_0]}(r) = \frac{r^2}{R_0^2}, \; F_{R, \, \mathrm{Unif}[0, R_0]}^{-1}(x) = \sqrt{x} R_0^2, \; f_{R, \, \mathrm{Unif}[0, R_0]}(r) = \frac{2 r}{R_0^2}; \\
-F_{R, \, \mathrm{Exp}(\lambda)}(r) = 1 - e^{-\pi \lambda r^2}, \; F_{R, \, \mathrm{Exp}(\lambda)}^{-1}(x) = \sqrt{-\frac{1}{\pi \lambda} \ln{(1 - x)}}, \\
+  F_{R, \, \mathrm{Unif}[0, R_0]}(r) = \frac{r^2}{R_0^2}, \quad F_{R, \, \mathrm{Unif}[0, R_0]}^{-1}(x) = \sqrt{x} R_0^2, \quad f_{R, \, \mathrm{Unif}[0, R_0]}(r) = \frac{2 r}{R_0^2}; \\
+F_{R, \, \mathrm{Exp}(\lambda)}(r) = 1 - e^{-\pi \lambda r^2}, \quad F_{R, \, \mathrm{Exp}(\lambda)}^{-1}(x) = \sqrt{-\frac{1}{\pi \lambda} \ln{(1 - x)}}, \\
 f_{R, \, \mathrm{Exp}(\lambda)}(r) = 2 \pi \lambda r e^{-\pi \lambda r^2},
 \end{gathered}
 \end{equation}
@@ -217,5 +213,80 @@ f_{R, \, \mathrm{Exp}(\lambda)}(r) = 2 \pi \lambda r e^{-\pi \lambda r^2},
   \subgraphics{exponential_disk/3/Heatmap Vertical Cut}
   \caption{Тепловые карты плоскости симметрии и \\ вертикального осевого сечения (третий каталог)}
 \end{figure}
+
+Используя метод наибольшего правдоподобия, найдем параметры распределения высот ($ \mu $ -- смещение плоскости симметрии, $ b $ -- вертикальный масштаб) и их доверительные интервалы (на доверительном уровне $ 1 \sigma $) для нескольких пробных каталогов. Используем три каталога при разных объемах выборки (N~=~100, 1000 и 10000) и ещё четыре при N~=~1000. Все каталоги --- выборки из распределения с параметрами $ \mu = 2.0 $ и $ b = 0.9 $.
+
+\newpage
+
+\begin{figure}[h!]
+  \centering
+  \setlength{\imageheight}{4.1cm}
+  \subgraphics{fit_uniform_disk/1, 100/μ profile}
+  \subgraphics{fit_uniform_disk/1, 100/b profile}
+  \subgraphics{fit_uniform_disk/1, 100/Histogram Z}
+  \caption{Профили отрицательных логарифмических функций правдоподобия для параметров распределения; гистограмма выборки из распределения значений высоты ($ N = 100 $, первый каталог)}
+\end{figure}
+
+\begin{figure}[h!]
+  \centering
+  \setlength{\imageheight}{4.1cm}
+  \subgraphics{fit_uniform_disk/1, 1000/μ profile}
+  \subgraphics{fit_uniform_disk/1, 1000/b profile}
+  \subgraphics{fit_uniform_disk/1, 1000/Histogram Z}
+  \caption{Профили отрицательных логарифмических функций правдоподобия для параметров распределения; гистограмма выборки из распределения значений высоты ($ N = 1000 $)}
+\end{figure}
+
+\newpage
+
+\begin{figure}[h!]
+  \centering
+  \setlength{\imageheight}{4.1cm}
+  \subgraphics{fit_uniform_disk/1, 10000/μ profile}
+  \subgraphics{fit_uniform_disk/1, 10000/b profile}
+  \subgraphics{fit_uniform_disk/1, 10000/Histogram Z}
+  \caption{Профили отрицательных логарифмических функций правдоподобия для параметров распределения; гистограмма выборки из распределения значений высоты ($ N = 10000 $)}
+\end{figure}
+
+\begin{figure}[h!]
+  \centering
+  \setlength{\imageheight}{4.1cm}
+  \subgraphics{fit_uniform_disk/2, 1000/μ profile}
+  \subgraphics{fit_uniform_disk/2, 1000/b profile}
+  \subgraphics{fit_uniform_disk/2, 1000/Histogram Z}
+  \caption{Профили отрицательных логарифмических функций правдоподобия для параметров распределения; гистограмма выборки из распределения значений высоты ($ N = 1000 $, второй каталог)}
+\end{figure}
+
+\newpage
+
+\begin{figure}[h!]
+  \centering
+  \setlength{\imageheight}{4.1cm}
+  \subgraphics{fit_uniform_disk/3, 1000/μ profile}
+  \subgraphics{fit_uniform_disk/3, 1000/b profile}
+  \subgraphics{fit_uniform_disk/3, 1000/Histogram Z}
+  \caption{Профили отрицательных логарифмических функций правдоподобия для параметров распределения; гистограмма выборки из распределения значений высоты ($ N = 1000 $, третий каталог)}
+\end{figure}
+
+\begin{figure}[h!]
+  \centering
+  \setlength{\imageheight}{4.1cm}
+  \subgraphics{fit_uniform_disk/4, 1000/μ profile}
+  \subgraphics{fit_uniform_disk/4, 1000/b profile}
+  \subgraphics{fit_uniform_disk/4, 1000/Histogram Z}
+  \caption{Профили отрицательных логарифмических функций правдоподобия для параметров распределения; гистограмма выборки из распределения значений высоты ($ N = 1000 $, четвертый каталог)}
+\end{figure}
+
+\newpage
+
+\begin{figure}[h!]
+  \centering
+  \setlength{\imageheight}{4.1cm}
+  \subgraphics{fit_uniform_disk/5, 1000/μ profile}
+  \subgraphics{fit_uniform_disk/5, 1000/b profile}
+  \subgraphics{fit_uniform_disk/5, 1000/Histogram Z}
+  \caption{Профили отрицательных логарифмических функций правдоподобия для параметров распределения; гистограмма выборки из распределения значений высоты ($ N = 1000 $, пятый каталог)}
+\end{figure}
+
+При увеличении размера выборки заметно повышение точности определения параметров распределения (и уменьшение длины доверительных интервалов). Данные из разных генераций каталогов при объеме выборки $ N = 1000 $ дают схожие точности определения параметров при длинах доверительных интервалов в пределах нескольких сотых долей.
 
 \end{document}

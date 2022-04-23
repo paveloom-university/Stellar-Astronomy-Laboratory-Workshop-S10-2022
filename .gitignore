@@ -2,6 +2,9 @@
 /plots
 /report/report.pdf
 
+# Traces
+/traces
+
 # Tex auxiliary files
 report/*.log
 report/*.gz

@@ -93,7 +93,7 @@ function plot_distribution(sample::AbstractVector, pdf::Function, dir::AbstractS
     savefig(joinpath(output_dir, "Histogram.png"))
 end
 
-# Set a seed for the random generator
+# Set a seed for the random number generator
 Random.seed!(2)
 
 # Plot a sample from the normal distribution with μ=1 and σ=2
